@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>5-Day Strength Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #0a0a0a; --white: #f5f0e8; --accent: #e8c84a; --card-bg: #141414; --muted: #666;
+  }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: var(--black); font-family: 'DM Sans', sans-serif;
+    color: var(--white); touch-action: none;
+  }
+
+  /* ── CAROUSEL ── */
+  .carousel {
+    width: 100%; height: 100%; display: flex;
+    transition: transform 0.45s cubic-bezier(0.77,0,0.18,1); will-change: transform;
+  }
+  .slide { min-width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* HERO */
+  .slide-hero { background: var(--black); justify-content: center; align-items: center; text-align: center; padding: 40px 24px; }
+  .hero-eyebrow { font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 4px; color: var(--accent); margin-bottom: 16px; }
+  .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(56px,18vw,80px); line-height: 0.9; color: var(--white); margin-bottom: 20px; }
+  .hero-title span { color: var(--accent); }
+  .hero-sub { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 280px; margin: 0 auto 32px; }
+  .hero-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; width: 100%; max-width: 320px; }
+  .hero-stat { background: var(--card-bg); border-radius: 12px; padding: 14px 8px; border: 1px solid #222; }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); display: block; }
+  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .swipe-hint {
+    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted);
+    animation: pulse 2s infinite; white-space: nowrap;
+  }
+  @keyframes pulse {
+    0%,100%{opacity:.5;transform:translateX(-50%) translateX(0)}
+    50%{opacity:1;transform:translateX(-50%) translateX(6px)}
+  }
+
+  /* DAY SLIDES */
+  .slide-day { background: var(--black); }
+  .day-hero { position: relative; height: 165px; overflow: hidden; flex-shrink: 0; }
+  .day-hero-bg { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; filter: brightness(0.45) saturate(1.1); }
+  .day-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.97) 100%);
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 14px 18px;
+  }
+  .day-badge { font-family: 'Bebas Neue', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--accent); margin-bottom: 3px; }
+  .day-title { font-family: 'Bebas Neue', sans-serif; font-size: 30px; line-height: 1; color: var(--white); }
+  .day-focus { font-size: 11px; color: rgba(245,240,232,0.45); margin-top: 3px; text-transform: uppercase; letter-spacing: 1.5px; }
+
+  /* EXERCISE LIST */
+  .exercises-list { flex: 1; overflow-y: auto; padding: 8px 14px 90px; -webkit-overflow-scrolling: touch; }
+  .exercises-list::-webkit-scrollbar { display: none; }
+  .exercise-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid #1a1a1a; }
+  .exercise-row:last-child { border-bottom: none; }
+
+  /* VIDEO THUMBNAIL — 96×96 */
+  .ex-thumb {
+    width: 96px; height: 96px; border-radius: 12px; overflow: hidden;
+    flex-shrink: 0; background: #111; border: 1px solid #2a2a2a;
+    position: relative; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .ex-thumb img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center;
+    display: block;
+  }
+  /* Play button overlay */
+  .play-overlay {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.35);
+    transition: background 0.2s;
+  }
+  .ex-thumb:active .play-overlay { background: rgba(0,0,0,0.55); }
+  .play-circle {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(232,200,74,0.92);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .play-circle svg { width: 14px; height: 14px; fill: #000; margin-left: 2px; }
+
+  .new-badge {
+    display: inline-block; margin-left: 5px; background: var(--accent); color: #000;
+    font-size: 9px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px;
+    padding: 1px 5px; border-radius: 4px; vertical-align: middle; line-height: 14px;
+  }
+  .ex-num { font-family: 'Bebas Neue', sans-serif; font-size: 17px; color: var(--accent); min-width: 20px; text-align: center; }
+  .ex-info { flex: 1; min-width: 0; }
+  .ex-name { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 3px; line-height: 1.3; }
+  .ex-why { font-size: 11px; color: var(--muted); line-height: 1.3; }
+  .ex-tag {
+    background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px;
+    padding: 5px 10px; font-size: 11px; font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px; color: var(--accent); white-space: nowrap; flex-shrink: 0;
+  }
+
+  /* RULES */
+  .slide-rules { background: var(--black); display: flex; flex-direction: column; }
+  .rules-header { background: var(--accent); padding: 52px 24px 22px; flex-shrink: 0; }
+  .rules-eyebrow { font-size: 11px; letter-spacing: 3px; color: rgba(0,0,0,0.5); text-transform: uppercase; margin-bottom: 6px; }
+  .rules-title { font-family: 'Bebas Neue', sans-serif; font-size: 50px; color: var(--black); line-height: 0.9; }
+  .rules-body { flex: 1; padding: 20px 20px 90px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .rules-body::-webkit-scrollbar { display: none; }
+  .rule-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #1a1a1a; align-items: flex-start; }
+  .rule-item:last-child { border-bottom: none; }
+  .rule-icon { font-size: 22px; min-width: 32px; text-align: center; }
+  .rule-label { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 3px; }
+  .rule-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── NAV BAR ── */
+  .nav-bar {
+    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 12px; z-index: 100;
+    background: rgba(10,10,10,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    padding: 10px 16px; border-radius: 32px; border: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-arrow {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: #1e1e1e; border: 1px solid #333;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: background 0.15s, transform 0.1s; flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-arrow:active { background: var(--accent); transform: scale(0.92); }
+  .nav-arrow:active svg { stroke: #000; }
+  .nav-arrow svg { width: 18px; height: 18px; fill: none; stroke: var(--white); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .dots-wrap { display: flex; gap: 8px; align-items: center; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.18); transition: all 0.3s ease; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .dot.active { background: var(--accent); width: 26px; border-radius: 5px; }
+
+  /* ── MODAL ── */
+  #modal {
+    position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.97);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    padding: 12px;
+  }
+  #modal.open { display: flex; }
+  .modal-card {
+    width: 100%; max-width: 460px;
+    background: #111; border-radius: 22px; overflow: hidden;
+    border: 1px solid #222; display: flex; flex-direction: column;
+  }
+  .modal-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px 12px; border-bottom: 1px solid #1e1e1e;
+  }
+  .modal-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--white); letter-spacing: 1px; }
+  .modal-x {
+    width: 36px; height: 36px; border-radius: 50%; background: #222; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
+  }
+  .modal-x svg { width: 14px; height: 14px; fill: none; stroke: var(--white); stroke-width: 2.5; stroke-linecap: round; }
+  /* 16:9 YouTube embed */
+  .modal-video {
+    width: 100%; aspect-ratio: 16/9; background: #000; position: relative;
+  }
+  .modal-video iframe {
+    width: 100%; height: 100%; border: none; display: block;
+  }
+  .modal-footer { padding: 14px 18px 18px; border-top: 1px solid #1e1e1e; }
+  .modal-sets { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); margin-bottom: 3px; }
+  .modal-why { font-size: 12px; color: var(--muted); line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-card">
+    <div class="modal-topbar">
+      <div class="modal-name" id="modal-name">Exercise</div>
+      <button class="modal-x" id="modal-x">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-video" id="modal-video"></div>
+    <div class="modal-footer">
+      <div class="modal-sets" id="modal-sets"></div>
+      <div class="modal-why" id="modal-why"></div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="carousel" id="carousel">
+
+  <!-- HERO -->
+  <div class="slide slide-hero" style="position:relative;">
+    <div class="hero-eyebrow">Your Complete Plan</div>
+    <div class="hero-title">5<span>-</span>Day<br>Strength<br>Guide</div>
+    <p class="hero-sub">Train hard. Progress weekly. Same plan for both of you — adjust weight only.</p>
+    <div class="hero-grid">
+      <div class="hero-stat"><span class="stat-num">5</span><span class="stat-label">Days/Week</span></div>
+      <div class="hero-stat"><span class="stat-num">60<span style="font-size:16px">m</span></span><span class="stat-label">Per Session</span></div>
+      <div class="hero-stat"><span class="stat-num">∞</span><span class="stat-label">Gains</span></div>
+    </div>
+    <div class="swipe-hint">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      Swipe to start
+    </div>
+  </div>
+
+  <!-- DAY 1 -->
+  <div class="slide slide-day">
+    <div class="day-hero">
+      <img class="day-hero-bg" src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=600&q=80" alt="">
+      <div class="day-hero-overlay">
+        <div class="day-badge">Day 01 · Lower Body</div>
+        <div class="day-title">Glutes & Quads</div>
+        <div class="day-focus">5 exercises · Power focus</div>
+      </div>
+    </div>
+    <div class="exercises-list" id="day1"></div>
+  </div>
+
+  <!-- DAY 2 -->
+  <div class="slide slide-day">
+    <div class="day-hero">
+      <img class="day-hero-bg" src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80" alt="">
+      <div class="day-hero-overlay">
+        <div class="day-badge">Day 02 · Upper Body</div>
+        <div class="day-title">Push Day</div>
+        <div class="day-focus">4 exercises · Chest & Shoulders</div>
+      </div>
+    </div>
+    <div class="exercises-list" id="day2"></div>
+  </div>
+
+  <!-- DAY 3 -->
+  <div class="slide slide-day">
+    <div class="day-hero">
+      <img class="day-hero-bg" src="https://images.unsplash.com/photo-1434682881908-b43d0467b798?w=600&q=80" alt="">
+      <div class="day-hero-overlay">
+        <div class="day-badge">Day 03 · Lower Body</div>
+        <div class="day-title">Hamstring Day</div>
+        <div class="day-focus">4 exercises · Posterior chain</div>
+      </div>
+    </div>
+    <div class="exercises-list" id="day3"></div>
+  </div>
+
+  <!-- DAY 4 -->
+  <div class="slide slide-day">
+    <div class="day-hero">
+      <img class="day-hero-bg" src="https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?w=600&q=80" alt="">
+      <div class="day-hero-overlay">
+        <div class="day-badge">Day 04 · Upper Body</div>
+        <div class="day-title">Pull Day</div>
+        <div class="day-focus">4 exercises · Back & Posture</div>
+      </div>
+    </div>
+    <div class="exercises-list" id="day4"></div>
+  </div>
+
+  <!-- DAY 5 -->
+  <div class="slide slide-day">
+    <div class="day-hero">
+      <img class="day-hero-bg" src="https://images.unsplash.com/photo-1550977616-efc580084ac5?w=600&q=80" alt="">
+      <div class="day-hero-overlay">
+        <div class="day-badge">Day 05 · Full Body</div>
+        <div class="day-title">Strength & Core</div>
+        <div class="day-focus">4 exercises · Total power</div>
+      </div>
+    </div>
+    <div class="exercises-list" id="day5"></div>
+  </div>
+
+  <!-- RULES -->
+  <div class="slide slide-rules">
+    <div class="rules-header">
+      <div class="rules-eyebrow">The Golden Rules</div>
+      <div class="rules-title">Stay<br>Consistent</div>
+    </div>
+    <div class="rules-body">
+      <div class="rule-item"><div class="rule-icon">⏱</div><div><div class="rule-label">45–60 Min Sessions</div><div class="rule-desc">Efficient and focused. No scrolling between sets.</div></div></div>
+      <div class="rule-item"><div class="rule-icon">😮‍💨</div><div><div class="rule-label">Rest 60–90 Seconds</div><div class="rule-desc">Enough to recover, not enough to cool down.</div></div></div>
+      <div class="rule-item"><div class="rule-icon">📈</div><div><div class="rule-label">Progress Weekly</div><div class="rule-desc">Add weight or reps every week. This is how you grow.</div></div></div>
+      <div class="rule-item"><div class="rule-icon">🎯</div><div><div class="rule-label">Form Over Ego</div><div class="rule-desc">Move well before you move heavy. Every time.</div></div></div>
+      <div class="rule-item"><div class="rule-icon">🔥</div><div><div class="rule-label">Consistency is Everything</div><div class="rule-desc">The best workout is the one you actually show up for.</div></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<div class="nav-bar">
+  <div class="nav-arrow" id="prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+  <div class="dots-wrap" id="dots"></div>
+  <div class="nav-arrow" id="next"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────
+// EXERCISE DATA
+// thumb: YouTube video ID → used for thumbnail img src
+//        https://img.youtube.com/vi/{ID}/mqdefault.jpg  (320×180, always works)
+// yt:    YouTube video ID for embed in modal
+// ─────────────────────────────────────────────────
+const DAYS = [
+  { id:'day1', exercises:[
+    { num:'01', name:'Hip Thrust',           sets:'4×8',      why:'Best glute strength builder',   yt:'xsEMVgzs_AA', isNew:false },
+    { num:'02', name:'Barbell Squat',        sets:'3×6–8',    why:'Full lower body power',         yt:'1oed-UmAxFs', isNew:false },
+    { num:'03', name:'Leg Press',            sets:'3×10',     why:'Quad overload, joint-friendly', yt:'IZxyjW7MPJQ', isNew:true  },
+    { num:'04', name:'Bulgarian Split Squat',sets:'3×8/leg',  why:'Balance + shape',               yt:'2C-uNgKwPLE', isNew:false },
+    { num:'05', name:'Calf Raises',          sets:'3×12–15',  why:'Lower leg strength',            yt:'gwLzBJYoWlI', isNew:false },
+  ]},
+  { id:'day2', exercises:[
+    { num:'01', name:'DB Bench Press',   sets:'4×8',  why:'Upper body strength',   yt:'VmB1G1K7v94' },
+    { num:'02', name:'Shoulder Press',   sets:'3×8',  why:'Shoulder size & power', yt:'qEwKCR5JCog' },
+    { num:'03', name:'Lateral Raise',    sets:'3×12', why:'Shoulder definition',   yt:'3VcKaXpzqRo' },
+    { num:'04', name:'Triceps Pushdown', sets:'3×12', why:'Arm strength',          yt:'2-LAMcpzODU' },
+  ]},
+  { id:'day3', exercises:[
+    { num:'01', name:'Romanian Deadlift',sets:'4×8',     why:'Glutes + hamstrings',  yt:'JCXUYuzwNrM' },
+    { num:'02', name:'Hip Thrust',       sets:'3×10',    why:'Extra glute growth',   yt:'xsEMVgzs_AA' },
+    { num:'03', name:'Leg Curl',         sets:'3×10',    why:'Hamstring isolation',  yt:'n_JJzNpBuTA' },
+    { num:'04', name:'Seated Calf Raise',sets:'3×12–15', why:'Deep calf muscle',     yt:'JbyjNymZOt0' },
+  ]},
+  { id:'day4', exercises:[
+    { num:'01', name:'Lat Pulldown', sets:'4×8',      why:'Back width',          yt:'CAwf7n6Luuc' },
+    { num:'02', name:'Seated Row',   sets:'3×10',     why:'Posture + thickness', yt:'GZbfZ033f74' },
+    { num:'03', name:'DB Row',       sets:'3×10/side',why:'Fix imbalances',      yt:'roCP6wCXPqo' },
+    { num:'04', name:'Face Pull',    sets:'3×12',     why:'Shoulder health',     yt:'rep-qVOkqgk' },
+  ]},
+  { id:'day5', exercises:[
+    { num:'01', name:'Deadlift',    sets:'4×5',    why:'Full body strength', yt:'op9kVnSso6Q' },
+    { num:'02', name:'Goblet Squat',sets:'3×12',   why:'Control & mobility', yt:'MeIiIdhvXT4' },
+    { num:'03', name:'Plank',       sets:'40s',    why:'Core stability',     yt:'ASdvN_XEl_c' },
+    { num:'04', name:'Dead Bug',    sets:'10/side',why:'Core control',       yt:'4XLEnwUr1d8' },
+  ]},
+];
+
+// Build thumbnail URL from YouTube ID
+function ytThumb(id) {
+  return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+}
+
+// Build rows
+DAYS.forEach(day => {
+  const el = document.getElementById(day.id);
+  day.exercises.forEach(ex => {
+    const row = document.createElement('div');
+    row.className = 'exercise-row';
+    row.innerHTML = `
+      <div class="ex-num">${ex.num}</div>
+      <div class="ex-thumb" role="button" aria-label="Watch ${ex.name}">
+        <img src="${ytThumb(ex.yt)}" alt="${ex.name}" loading="lazy">
+        <div class="play-overlay">
+          <div class="play-circle">
+            <svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="ex-info">
+        <div class="ex-name">${ex.name}${ex.isNew?'<span class="new-badge">NEW</span>':''}</div>
+        <div class="ex-why">${ex.why}</div>
+      </div>
+      <div class="ex-tag">${ex.sets}</div>
+    `;
+    row.querySelector('.ex-thumb').addEventListener('click', () => openModal(ex));
+    el.appendChild(row);
+  });
+});
+
+// ── MODAL ──
+const modal     = document.getElementById('modal');
+const modalName = document.getElementById('modal-name');
+const modalVid  = document.getElementById('modal-video');
+const modalSets = document.getElementById('modal-sets');
+const modalWhy  = document.getElementById('modal-why');
+
+function openModal(ex) {
+  modalName.textContent = ex.name;
+  modalSets.textContent = ex.sets;
+  modalWhy.textContent  = ex.why;
+  // Embed YouTube with autoplay, mute=0 so they can hear coaching cues
+  modalVid.innerHTML = `<iframe
+    src="https://www.youtube.com/embed/${ex.yt}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+    allow="autoplay; encrypted-media; picture-in-picture"
+    allowfullscreen
+    loading="lazy">
+  </iframe>`;
+  modal.classList.add('open');
+}
+
+function closeModal() {
+  modal.classList.remove('open');
+  modalVid.innerHTML = ''; // stop video
+}
+
+document.getElementById('modal-x').addEventListener('click', closeModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+// ── CAROUSEL ──
+const carousel = document.getElementById('carousel');
+const dotsWrap = document.getElementById('dots');
+const total    = carousel.children.length;
+let cur = 0, sx = 0, dragging = false, dx = 0;
+
+for (let i = 0; i < total; i++) {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.addEventListener('click', () => goTo(i));
+  dotsWrap.appendChild(d);
+}
+
+function goTo(i) {
+  cur = Math.max(0, Math.min(total-1, i));
+  carousel.style.transform = `translateX(-${cur*100}%)`;
+  dotsWrap.querySelectorAll('.dot').forEach((d,j) => d.classList.toggle('active', j===cur));
+}
+
+document.getElementById('prev').addEventListener('click', () => goTo(cur-1));
+document.getElementById('next').addEventListener('click', () => goTo(cur+1));
+
+carousel.addEventListener('touchstart', e => {
+  if (modal.classList.contains('open')) return;
+  sx = e.touches[0].clientX; dragging = true;
+  carousel.style.transition = 'none';
+}, {passive:true});
+
+carousel.addEventListener('touchmove', e => {
+  if (!dragging || modal.classList.contains('open')) return;
+  dx = e.touches[0].clientX - sx;
+  carousel.style.transform = `translateX(${-(cur*100)+(dx/innerWidth*100)}%)`;
+}, {passive:true});
+
+carousel.addEventListener('touchend', () => {
+  if (!dragging) return;
+  dragging = false;
+  carousel.style.transition = 'transform 0.45s cubic-bezier(0.77,0,0.18,1)';
+  if (dx < -50) goTo(cur+1);
+  else if (dx > 50) goTo(cur-1);
+  else goTo(cur);
+  dx = 0;
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') { closeModal(); return; }
+  if (modal.classList.contains('open')) return;
+  if (e.key==='ArrowRight') goTo(cur+1);
+  if (e.key==='ArrowLeft')  goTo(cur-1);
+});
+</script>
+</body>
+</html>
