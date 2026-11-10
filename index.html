@@ -1,455 +1,216 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>5-Day Strength Guide</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Colombia 2026</title><meta name="theme-color" content="#0f3d2e">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --black: #0a0a0a; --white: #f5f0e8; --accent: #e8c84a; --card-bg: #141414; --muted: #666;
-  }
-  html, body {
-    width: 100%; height: 100%; overflow: hidden;
-    background: var(--black); font-family: 'DM Sans', sans-serif;
-    color: var(--white); touch-action: none;
-  }
-
-  /* ── CAROUSEL ── */
-  .carousel {
-    width: 100%; height: 100%; display: flex;
-    transition: transform 0.45s cubic-bezier(0.77,0,0.18,1); will-change: transform;
-  }
-  .slide { min-width: 100%; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
-
-  /* HERO */
-  .slide-hero { background: var(--black); justify-content: center; align-items: center; text-align: center; padding: 40px 24px; }
-  .hero-eyebrow { font-family: 'Bebas Neue', sans-serif; font-size: 13px; letter-spacing: 4px; color: var(--accent); margin-bottom: 16px; }
-  .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(56px,18vw,80px); line-height: 0.9; color: var(--white); margin-bottom: 20px; }
-  .hero-title span { color: var(--accent); }
-  .hero-sub { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 280px; margin: 0 auto 32px; }
-  .hero-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; width: 100%; max-width: 320px; }
-  .hero-stat { background: var(--card-bg); border-radius: 12px; padding: 14px 8px; border: 1px solid #222; }
-  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); display: block; }
-  .stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-  .swipe-hint {
-    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
-    display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted);
-    animation: pulse 2s infinite; white-space: nowrap;
-  }
-  @keyframes pulse {
-    0%,100%{opacity:.5;transform:translateX(-50%) translateX(0)}
-    50%{opacity:1;transform:translateX(-50%) translateX(6px)}
-  }
-
-  /* DAY SLIDES */
-  .slide-day { background: var(--black); }
-  .day-hero { position: relative; height: 165px; overflow: hidden; flex-shrink: 0; }
-  .day-hero-bg { width: 100%; height: 100%; object-fit: cover; object-position: center 25%; filter: brightness(0.45) saturate(1.1); }
-  .day-hero-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to bottom, transparent 0%, rgba(10,10,10,0.97) 100%);
-    display: flex; flex-direction: column; justify-content: flex-end; padding: 14px 18px;
-  }
-  .day-badge { font-family: 'Bebas Neue', sans-serif; font-size: 11px; letter-spacing: 3px; color: var(--accent); margin-bottom: 3px; }
-  .day-title { font-family: 'Bebas Neue', sans-serif; font-size: 30px; line-height: 1; color: var(--white); }
-  .day-focus { font-size: 11px; color: rgba(245,240,232,0.45); margin-top: 3px; text-transform: uppercase; letter-spacing: 1.5px; }
-
-  /* EXERCISE LIST */
-  .exercises-list { flex: 1; overflow-y: auto; padding: 8px 14px 90px; -webkit-overflow-scrolling: touch; }
-  .exercises-list::-webkit-scrollbar { display: none; }
-  .exercise-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid #1a1a1a; }
-  .exercise-row:last-child { border-bottom: none; }
-
-  /* VIDEO THUMBNAIL — 96×96 */
-  .ex-thumb {
-    width: 96px; height: 96px; border-radius: 12px; overflow: hidden;
-    flex-shrink: 0; background: #111; border: 1px solid #2a2a2a;
-    position: relative; cursor: pointer; -webkit-tap-highlight-color: transparent;
-  }
-  .ex-thumb img {
-    width: 100%; height: 100%; object-fit: cover; object-position: center;
-    display: block;
-  }
-  /* Play button overlay */
-  .play-overlay {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    background: rgba(0,0,0,0.35);
-    transition: background 0.2s;
-  }
-  .ex-thumb:active .play-overlay { background: rgba(0,0,0,0.55); }
-  .play-circle {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: rgba(232,200,74,0.92);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .play-circle svg { width: 14px; height: 14px; fill: #000; margin-left: 2px; }
-
-  .new-badge {
-    display: inline-block; margin-left: 5px; background: var(--accent); color: #000;
-    font-size: 9px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px;
-    padding: 1px 5px; border-radius: 4px; vertical-align: middle; line-height: 14px;
-  }
-  .ex-num { font-family: 'Bebas Neue', sans-serif; font-size: 17px; color: var(--accent); min-width: 20px; text-align: center; }
-  .ex-info { flex: 1; min-width: 0; }
-  .ex-name { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 3px; line-height: 1.3; }
-  .ex-why { font-size: 11px; color: var(--muted); line-height: 1.3; }
-  .ex-tag {
-    background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 20px;
-    padding: 5px 10px; font-size: 11px; font-family: 'Bebas Neue', sans-serif;
-    letter-spacing: 1px; color: var(--accent); white-space: nowrap; flex-shrink: 0;
-  }
-
-  /* RULES */
-  .slide-rules { background: var(--black); display: flex; flex-direction: column; }
-  .rules-header { background: var(--accent); padding: 52px 24px 22px; flex-shrink: 0; }
-  .rules-eyebrow { font-size: 11px; letter-spacing: 3px; color: rgba(0,0,0,0.5); text-transform: uppercase; margin-bottom: 6px; }
-  .rules-title { font-family: 'Bebas Neue', sans-serif; font-size: 50px; color: var(--black); line-height: 0.9; }
-  .rules-body { flex: 1; padding: 20px 20px 90px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  .rules-body::-webkit-scrollbar { display: none; }
-  .rule-item { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #1a1a1a; align-items: flex-start; }
-  .rule-item:last-child { border-bottom: none; }
-  .rule-icon { font-size: 22px; min-width: 32px; text-align: center; }
-  .rule-label { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 3px; }
-  .rule-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
-
-  /* ── NAV BAR ── */
-  .nav-bar {
-    position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
-    display: flex; align-items: center; gap: 12px; z-index: 100;
-    background: rgba(10,10,10,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    padding: 10px 16px; border-radius: 32px; border: 1px solid rgba(255,255,255,0.08);
-  }
-  .nav-arrow {
-    width: 42px; height: 42px; border-radius: 50%;
-    background: #1e1e1e; border: 1px solid #333;
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-    transition: background 0.15s, transform 0.1s; flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .nav-arrow:active { background: var(--accent); transform: scale(0.92); }
-  .nav-arrow:active svg { stroke: #000; }
-  .nav-arrow svg { width: 18px; height: 18px; fill: none; stroke: var(--white); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-  .dots-wrap { display: flex; gap: 8px; align-items: center; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.18); transition: all 0.3s ease; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .dot.active { background: var(--accent); width: 26px; border-radius: 5px; }
-
-  /* ── MODAL ── */
-  #modal {
-    position: fixed; inset: 0; z-index: 500;
-    background: rgba(0,0,0,0.97);
-    display: none; flex-direction: column; align-items: center; justify-content: center;
-    padding: 12px;
-  }
-  #modal.open { display: flex; }
-  .modal-card {
-    width: 100%; max-width: 460px;
-    background: #111; border-radius: 22px; overflow: hidden;
-    border: 1px solid #222; display: flex; flex-direction: column;
-  }
-  .modal-topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 18px 12px; border-bottom: 1px solid #1e1e1e;
-  }
-  .modal-name { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--white); letter-spacing: 1px; }
-  .modal-x {
-    width: 36px; height: 36px; border-radius: 50%; background: #222; border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent;
-    flex-shrink: 0;
-  }
-  .modal-x svg { width: 14px; height: 14px; fill: none; stroke: var(--white); stroke-width: 2.5; stroke-linecap: round; }
-  /* 16:9 YouTube embed */
-  .modal-video {
-    width: 100%; aspect-ratio: 16/9; background: #000; position: relative;
-  }
-  .modal-video iframe {
-    width: 100%; height: 100%; border: none; display: block;
-  }
-  .modal-footer { padding: 14px 18px 18px; border-top: 1px solid #1e1e1e; }
-  .modal-sets { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); margin-bottom: 3px; }
-  .modal-why { font-size: 12px; color: var(--muted); line-height: 1.5; }
-</style>
-</head>
-<body>
-
-<!-- MODAL -->
-<div id="modal">
-  <div class="modal-card">
-    <div class="modal-topbar">
-      <div class="modal-name" id="modal-name">Exercise</div>
-      <button class="modal-x" id="modal-x">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="modal-video" id="modal-video"></div>
-    <div class="modal-footer">
-      <div class="modal-sets" id="modal-sets"></div>
-      <div class="modal-why" id="modal-why"></div>
-    </div>
-  </div>
-</div>
-
-<!-- APP -->
-<div class="carousel" id="carousel">
-
-  <!-- HERO -->
-  <div class="slide slide-hero" style="position:relative;">
-    <div class="hero-eyebrow">Your Complete Plan</div>
-    <div class="hero-title">5<span>-</span>Day<br>Strength<br>Guide</div>
-    <p class="hero-sub">Train hard. Progress weekly. Same plan for both of you — adjust weight only.</p>
-    <div class="hero-grid">
-      <div class="hero-stat"><span class="stat-num">5</span><span class="stat-label">Days/Week</span></div>
-      <div class="hero-stat"><span class="stat-num">60<span style="font-size:16px">m</span></span><span class="stat-label">Per Session</span></div>
-      <div class="hero-stat"><span class="stat-num">∞</span><span class="stat-label">Gains</span></div>
-    </div>
-    <div class="swipe-hint">
-      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-      Swipe to start
-    </div>
-  </div>
-
-  <!-- DAY 1 -->
-  <div class="slide slide-day">
-    <div class="day-hero">
-      <img class="day-hero-bg" src="https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=600&q=80" alt="">
-      <div class="day-hero-overlay">
-        <div class="day-badge">Day 01 · Lower Body</div>
-        <div class="day-title">Glutes & Quads</div>
-        <div class="day-focus">5 exercises · Power focus</div>
-      </div>
-    </div>
-    <div class="exercises-list" id="day1"></div>
-  </div>
-
-  <!-- DAY 2 -->
-  <div class="slide slide-day">
-    <div class="day-hero">
-      <img class="day-hero-bg" src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80" alt="">
-      <div class="day-hero-overlay">
-        <div class="day-badge">Day 02 · Upper Body</div>
-        <div class="day-title">Push Day</div>
-        <div class="day-focus">4 exercises · Chest & Shoulders</div>
-      </div>
-    </div>
-    <div class="exercises-list" id="day2"></div>
-  </div>
-
-  <!-- DAY 3 -->
-  <div class="slide slide-day">
-    <div class="day-hero">
-      <img class="day-hero-bg" src="https://images.unsplash.com/photo-1434682881908-b43d0467b798?w=600&q=80" alt="">
-      <div class="day-hero-overlay">
-        <div class="day-badge">Day 03 · Lower Body</div>
-        <div class="day-title">Hamstring Day</div>
-        <div class="day-focus">4 exercises · Posterior chain</div>
-      </div>
-    </div>
-    <div class="exercises-list" id="day3"></div>
-  </div>
-
-  <!-- DAY 4 -->
-  <div class="slide slide-day">
-    <div class="day-hero">
-      <img class="day-hero-bg" src="https://images.unsplash.com/photo-1598971457999-ca4ef48a9a71?w=600&q=80" alt="">
-      <div class="day-hero-overlay">
-        <div class="day-badge">Day 04 · Upper Body</div>
-        <div class="day-title">Pull Day</div>
-        <div class="day-focus">4 exercises · Back & Posture</div>
-      </div>
-    </div>
-    <div class="exercises-list" id="day4"></div>
-  </div>
-
-  <!-- DAY 5 -->
-  <div class="slide slide-day">
-    <div class="day-hero">
-      <img class="day-hero-bg" src="https://images.unsplash.com/photo-1550977616-efc580084ac5?w=600&q=80" alt="">
-      <div class="day-hero-overlay">
-        <div class="day-badge">Day 05 · Full Body</div>
-        <div class="day-title">Strength & Core</div>
-        <div class="day-focus">4 exercises · Total power</div>
-      </div>
-    </div>
-    <div class="exercises-list" id="day5"></div>
-  </div>
-
-  <!-- RULES -->
-  <div class="slide slide-rules">
-    <div class="rules-header">
-      <div class="rules-eyebrow">The Golden Rules</div>
-      <div class="rules-title">Stay<br>Consistent</div>
-    </div>
-    <div class="rules-body">
-      <div class="rule-item"><div class="rule-icon">⏱</div><div><div class="rule-label">45–60 Min Sessions</div><div class="rule-desc">Efficient and focused. No scrolling between sets.</div></div></div>
-      <div class="rule-item"><div class="rule-icon">😮‍💨</div><div><div class="rule-label">Rest 60–90 Seconds</div><div class="rule-desc">Enough to recover, not enough to cool down.</div></div></div>
-      <div class="rule-item"><div class="rule-icon">📈</div><div><div class="rule-label">Progress Weekly</div><div class="rule-desc">Add weight or reps every week. This is how you grow.</div></div></div>
-      <div class="rule-item"><div class="rule-icon">🎯</div><div><div class="rule-label">Form Over Ego</div><div class="rule-desc">Move well before you move heavy. Every time.</div></div></div>
-      <div class="rule-item"><div class="rule-icon">🔥</div><div><div class="rule-label">Consistency is Everything</div><div class="rule-desc">The best workout is the one you actually show up for.</div></div></div>
-    </div>
-  </div>
-
-</div>
-
-<!-- NAV -->
-<div class="nav-bar">
-  <div class="nav-arrow" id="prev"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
-  <div class="dots-wrap" id="dots"></div>
-  <div class="nav-arrow" id="next"><svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg></div>
-</div>
-
+:root{--ink:#10231c;--sel:#0f3d2e;--sel2:#1c5a45;--mist:#f2f5ef;--line:#dde5d9;--sun:#f2b134;--mut:#58685f}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font:16px/1.55 'Instrument Sans',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--mist);padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+h1,h2,h3,h4{font-family:'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.02em;line-height:1.1}
+a{color:inherit}button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+#nav{position:fixed;z-index:30;left:0;right:0;bottom:0;display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom));background:#0f3d2eea;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#nav b{display:none;font:800 20px 'Bricolage Grotesque',sans-serif;color:#fff}
+#nav button{color:#cfe0d6;padding:9px 12px;border-radius:99px;font-size:13px;font-weight:600}
+#nav button[aria-current=true]{background:var(--sun);color:var(--ink)}
+.ph{position:relative;overflow:hidden;background:linear-gradient(135deg,hsl(var(--h) 34% 24%),hsl(var(--h2) 38% 40%)) center/cover}
+.ph>b{position:absolute;left:14px;bottom:12px;color:#ffffffb5;font:600 13px 'Bricolage Grotesque',sans-serif}
+.ph.on>b{display:none}
+.sw{position:absolute;right:10px;top:10px;background:#000a;color:#fff;border-radius:99px;padding:5px 11px;font-size:12px;opacity:0;transition:opacity .2s}
+.ph.on .sw{opacity:1}
+.hero{position:relative;min-height:88svh;display:flex;align-items:flex-end;color:#fff}
+.hero .hb{position:absolute;inset:0}.hero .sw{display:none}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,#07241a55 0,#07241a00 35%,#07241aee 100%)}
+.hc{position:relative;max-width:1120px;width:100%;margin:auto;padding:0 20px 56px}
+.hc h1{font-size:clamp(64px,17vw,168px);font-weight:800;line-height:.88;margin:10px 0 18px}
+.hc .lead{max-width:34ch;font-size:19px;color:#e8f1ea}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:13px 20px;border-radius:99px;font-weight:600;text-decoration:none;background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.sun{background:var(--sun);border-color:var(--sun)}.btn.ghost{background:#ffffff22;color:#fff;border-color:#ffffff66}
+.btn.sm{padding:9px 15px;font-size:14px}
+.wrap{max-width:1120px;margin:auto;padding:36px 20px}
+h2{font-size:clamp(28px,5vw,42px);margin-bottom:6px}.sub{color:var(--mut);margin-bottom:22px;max-width:60ch}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tile{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+.tile strong{display:block;font:800 30px 'Bricolage Grotesque',sans-serif}.tile span{color:var(--mut);font-size:14px}
+.tile svg{float:right}
+.mapc{background:radial-gradient(circle at 30% 20%,#1c5a45,#0b2a20);border-radius:28px;padding:16px;display:grid;gap:12px;color:#fff}
+.mapc svg{width:100%;max-height:560px}.mapc text{font:600 12px 'Instrument Sans',sans-serif;fill:#e9f3ec}
+.mapc g[data-dest]{cursor:pointer}
+.note{background:#fff7e0;border:1px solid #f0dca0;border-radius:14px;padding:14px 16px;font-size:14px;margin-top:20px}
+.scroll{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;margin:0 -20px;padding-inline:20px}
+.dc{flex:0 0 min(72vw,280px);scroll-snap-align:start;border-radius:22px;overflow:hidden;color:#fff;text-align:left;position:relative;aspect-ratio:3/4}
+.dc .ph{position:absolute;inset:0}.dc .sw{display:none}
+.dc div.t{position:absolute;inset:auto 0 0;padding:44px 16px 16px;background:linear-gradient(transparent,#06201699 60%,#062016dd)}
+.dc h3{font-size:22px}.dc small{opacity:.85}
+.chips{position:sticky;top:0;z-index:15;display:flex;gap:8px;overflow-x:auto;padding:12px 16px;background:#f2f5efec;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.chips button{flex:0 0 auto;min-width:58px;border-radius:16px;padding:7px 10px;background:#fff;border:1px solid var(--line);font:800 18px 'Bricolage Grotesque',sans-serif;line-height:1.1}
+.chips small{display:block;font:500 11px 'Instrument Sans',sans-serif;color:var(--mut)}
+.chips button[aria-selected=true]{background:var(--sel);color:#fff;border-color:var(--sel)}.chips button[aria-selected=true] small{color:#bfd6c9}
+.chips button.ok:after{content:" ✓";font-size:13px;color:var(--sun)}
+.dh{position:relative;overflow:hidden;min-height:320px;border-radius:28px;color:#fff;display:flex;align-items:flex-end}
+.dh .hb{position:absolute;inset:0}.dh .sw{display:none}.dh .dt{position:relative;padding:22px;background:linear-gradient(transparent,#06201699 55%,#062016ee);width:100%;padding-top:90px}
+.dh h2{color:#fff;font-size:clamp(30px,6vw,52px);margin:4px 0}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:16px 0}
+.meta .tile strong{font-size:20px}.meta a{font-size:13px;color:var(--sel2);font-weight:600}
+.stops{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));margin-top:22px}
+.stop{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;transition:opacity .2s}
+.stop .sp{aspect-ratio:16/10}.sb{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.sb time{font:700 14px 'Bricolage Grotesque',sans-serif;color:var(--sel2)}.sb h3{font-size:21px}.sb p{color:var(--mut);font-size:15px;flex:1}
+.ac{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.stop.np{background:transparent;border-style:dashed}
+.stop.done{opacity:.62}.stop.done .chk{background:var(--sel);color:#fff;border-color:var(--sel)}
+.pn{display:flex;justify-content:space-between;gap:10px;margin-top:26px}
+details{background:#fff;border:1px solid var(--line);border-radius:18px;margin-bottom:10px;padding:4px 18px}
+summary{cursor:pointer;padding:14px 0;font:700 20px 'Bricolage Grotesque',sans-serif;list-style:none}
+details[open] summary{border-bottom:1px solid var(--line)}details>div{padding:12px 0 16px;display:grid;gap:8px}
+details a{color:var(--sel2);font-weight:600}
+.f{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.f input{width:130px;padding:9px 11px;border:1px solid var(--line);border-radius:12px;font:inherit;text-align:right;background:#fff}
+.tot{background:var(--sel);color:#fff;border-radius:22px;padding:22px;margin-top:18px}.tot strong{display:block;font:800 40px 'Bricolage Grotesque',sans-serif}
+.tot p{color:#cfe0d6;font-size:14px}
+.ck{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;cursor:pointer}
+.ck input{width:22px;height:22px;accent-color:var(--sel);flex:none}.ck input:checked+span{text-decoration:line-through;opacity:.55}
+h3.g{margin:22px 0 10px;font-size:22px}
+footer{padding:10px 20px 30px;text-align:center;color:var(--mut);font-size:13px}
+@media(min-width:800px){body{padding:0}#nav{top:0;bottom:auto;justify-content:flex-end;gap:6px;padding:12px 28px}#nav b{display:block;margin-right:auto}.chips{top:62px;justify-content:center}.stats{grid-template-columns:repeat(4,1fr)}.mapc{grid-template-columns:1fr 1fr;align-items:center;padding:28px}.scroll{margin:0;padding-inline:0}.dc{flex-basis:260px}.wrap{padding:48px 28px}.hc{padding:0 28px 72px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style></head><body>
+<nav id="nav" aria-label="Secciones"><b>Colombia 2026</b>
+<button data-t="home">Inicio</button><button data-t="itin">Itinerario</button><button data-t="guide">Guía</button><button data-t="bud">Presupuesto</button><button data-t="list">Lista</button></nav>
+<main id="app"></main>
+<footer>Fotos: Wikimedia Commons (licencias libres), buscadas en línea para cada lugar. Tiempos y distancias son aproximados: confirma en Google Maps antes de salir.</footer>
 <script>
-// ─────────────────────────────────────────────────
-// EXERCISE DATA
-// thumb: YouTube video ID → used for thumbnail img src
-//        https://img.youtube.com/vi/{ID}/mqdefault.jpg  (320×180, always works)
-// yt:    YouTube video ID for embed in modal
-// ─────────────────────────────────────────────────
-const DAYS = [
-  { id:'day1', exercises:[
-    { num:'01', name:'Hip Thrust',           sets:'4×8',      why:'Best glute strength builder',   yt:'xsEMVgzs_AA', isNew:false },
-    { num:'02', name:'Barbell Squat',        sets:'3×6–8',    why:'Full lower body power',         yt:'1oed-UmAxFs', isNew:false },
-    { num:'03', name:'Leg Press',            sets:'3×10',     why:'Quad overload, joint-friendly', yt:'IZxyjW7MPJQ', isNew:true  },
-    { num:'04', name:'Bulgarian Split Squat',sets:'3×8/leg',  why:'Balance + shape',               yt:'2C-uNgKwPLE', isNew:false },
-    { num:'05', name:'Calf Raises',          sets:'3×12–15',  why:'Lower leg strength',            yt:'gwLzBJYoWlI', isNew:false },
-  ]},
-  { id:'day2', exercises:[
-    { num:'01', name:'DB Bench Press',   sets:'4×8',  why:'Upper body strength',   yt:'VmB1G1K7v94' },
-    { num:'02', name:'Shoulder Press',   sets:'3×8',  why:'Shoulder size & power', yt:'qEwKCR5JCog' },
-    { num:'03', name:'Lateral Raise',    sets:'3×12', why:'Shoulder definition',   yt:'3VcKaXpzqRo' },
-    { num:'04', name:'Triceps Pushdown', sets:'3×12', why:'Arm strength',          yt:'2-LAMcpzODU' },
-  ]},
-  { id:'day3', exercises:[
-    { num:'01', name:'Romanian Deadlift',sets:'4×8',     why:'Glutes + hamstrings',  yt:'JCXUYuzwNrM' },
-    { num:'02', name:'Hip Thrust',       sets:'3×10',    why:'Extra glute growth',   yt:'xsEMVgzs_AA' },
-    { num:'03', name:'Leg Curl',         sets:'3×10',    why:'Hamstring isolation',  yt:'n_JJzNpBuTA' },
-    { num:'04', name:'Seated Calf Raise',sets:'3×12–15', why:'Deep calf muscle',     yt:'JbyjNymZOt0' },
-  ]},
-  { id:'day4', exercises:[
-    { num:'01', name:'Lat Pulldown', sets:'4×8',      why:'Back width',          yt:'CAwf7n6Luuc' },
-    { num:'02', name:'Seated Row',   sets:'3×10',     why:'Posture + thickness', yt:'GZbfZ033f74' },
-    { num:'03', name:'DB Row',       sets:'3×10/side',why:'Fix imbalances',      yt:'roCP6wCXPqo' },
-    { num:'04', name:'Face Pull',    sets:'3×12',     why:'Shoulder health',     yt:'rep-qVOkqgk' },
-  ]},
-  { id:'day5', exercises:[
-    { num:'01', name:'Deadlift',    sets:'4×5',    why:'Full body strength', yt:'op9kVnSso6Q' },
-    { num:'02', name:'Goblet Squat',sets:'3×12',   why:'Control & mobility', yt:'MeIiIdhvXT4' },
-    { num:'03', name:'Plank',       sets:'40s',    why:'Core stability',     yt:'ASdvN_XEl_c' },
-    { num:'04', name:'Dead Bug',    sets:'10/side',why:'Core control',       yt:'4XLEnwUr1d8' },
-  ]},
+const $=s=>document.querySelector(s),enc=encodeURIComponent;
+let st={done:{},chk:{},bud:{},day:0,tab:'home'};
+try{Object.assign(st,JSON.parse(localStorage.getItem('col26')||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem('col26',JSON.stringify(st))}catch(e){}};
+const MQ=q=>'https://www.google.com/maps/search/?api=1&query='+enc(q);
+const DIR=(o,d,w)=>'https://www.google.com/maps/dir/?api=1&travelmode=driving&origin='+enc(o)+'&destination='+enc(d)+(w?'&waypoints='+enc(w):'');
+const FU='Fusagasugá, Cundinamarca';
+const FULL=DIR(FU,'Ibagué, Tolima',['Reserva Natural Cañón del Río Claro, Antioquia','Guatapé, Antioquia','Medellín, Antioquia','Jericó, Antioquia','Jardín, Antioquia','Santa Rosa de Cabal, Risaralda'].join('|'));
+const L=(h,n,t,m)=>[h,n,t,0,m],A=(h,n,t,q,m)=>[h,n,t,q,m];
+const D=[
+{d:['Jue','3 dic'],t:'Fusagasugá hacia el Cañón del Río Claro',hq:'Cañón del Río Claro',km:'≈330 km',dr:'≈7–8 h',pj:'Entre Bogotá y La Dorada hay varios peajes; en 2024 rondaban $12.000–$16.200 cada uno y hoy pueden ser algo más altos. El de Puerto Triunfo está sin cobro por una protesta (nov 2026) y puede reanudarse.',sl:'Cabañas de la reserva u hotel en Doradal',sq:'hoteles cerca de Cañón del Río Claro, Antioquia',o:FU,de:'Reserva Natural Cañón del Río Claro, Antioquia',s:[
+L('06:00','Salida de Fusagasugá','Es la jornada de carretera más larga de la ida. Carga combustible y revisa el carro antes de salir.',FU),
+L('12:30','Almuerzo en ruta','Pausa a mitad de camino; Guaduas y La Dorada son paradas habituales de este corredor.','Guaduas, Cundinamarca'),
+L('15:30','Check-in cerca del cañón','Instálate y confirma horarios de ingreso y actividades para mañana.','Reserva Natural Cañón del Río Claro, Antioquia'),
+A('17:00','Entorno del río','Paseo corto y tranquilo para sentir el lugar antes del día grande.','Río Claro Antioquia río','Cañón del Río Claro, Antioquia')]},
+{d:['Vie','4 dic'],t:'Río Claro y llegada a Guatapé',hq:'Guatapé',km:'≈100 km',dr:'≈2–2,5 h',pj:'Posible peaje de El Santuario: $18.000 (cobro reanudado en nov 2026).',sl:'Hotel en el pueblo de Guatapé o frente al embalse',sq:'hoteles en Guatapé, Antioquia',o:'Reserva Natural Cañón del Río Claro, Antioquia',de:'Guatapé, Antioquia',s:[
+A('08:00','Cañón del Río Claro','Caminata junto al río entre paredes de mármol. Reserva con anticipación las actividades guiadas y confirma horarios.','Cañón del Río Claro','Reserva Natural Cañón del Río Claro, Antioquia'),
+A('10:30','Cavernas del cañón','Recorrido guiado por las cavernas, según disponibilidad de la reserva.','Caverna Cañón del Río Claro','Reserva Natural Cañón del Río Claro, Antioquia'),
+L('14:00','Traslado a Guatapé','Sal después del almuerzo; el trayecto es corto en comparación con el primer día.','Guatapé, Antioquia'),
+A('17:00','Plazoleta de los Zócalos','Primer paseo por el pueblo de casas con relieves de colores.','Zócalos Guatapé','Plazoleta de los Zócalos, Guatapé')]},
+{d:['Sáb','5 dic'],t:'Piedra del Peñol y rumbo a Medellín',hq:'Piedra del Peñol',km:'≈80 km',dr:'≈2 h',sl:'Hotel en El Poblado o Laureles, Medellín',sq:'hoteles en El Poblado, Medellín',o:'Guatapé, Antioquia',de:'Medellín, Antioquia',s:[
+A('07:30','Piedra del Peñol','Sube los cerca de 700 escalones temprano, con menos gente y mejor luz sobre el embalse. Confirma horario de ingreso.','Piedra del Peñol','Piedra del Peñol, Antioquia'),
+A('10:30','Embalse y malecón','Paseo junto al agua; hay recorridos en lancha opcionales.','Embalse Peñol Guatapé','Malecón de Guatapé'),
+A('12:00','Calle del Recuerdo','Almuerzo y paseo por la calle más fotografiada del pueblo.','Calle del Recuerdo Guatapé','Calle del Recuerdo, Guatapé'),
+L('14:30','Traslado a Medellín','Evita llegar en hora pico a la ciudad.','Medellín, Antioquia')]},
+{d:['Dom','6 dic'],t:'Medellín sin carro',hq:'Medellín Colombia ciudad',km:'Local',dr:'Usa Metro o taxi',sl:'El mismo hotel de ayer',sq:'hoteles en Medellín, Antioquia',o:null,de:'Medellín, Antioquia',s:[
+A('09:00','Comuna 13','Recorrido guiado por los murales y escaleras eléctricas del barrio.','Comuna 13 Medellín','Comuna 13, Medellín'),
+A('12:30','Plaza Botero y Museo de Antioquia','Esculturas de Botero al aire libre y un museo en el centro histórico.','Plaza Botero Medellín','Plaza Botero, Medellín'),
+A('15:30','Pueblito Paisa','Mirador del Cerro Nutibara con vista a toda la ciudad.','Pueblito Paisa Medellín','Pueblito Paisa, Medellín'),
+A('19:00','Alumbrados navideños','Si hay luces encendidas en tus fechas, es el plan de la noche. Verifica ubicaciones y fechas oficiales.','Alumbrado navideño Medellín','Alumbrados navideños Medellín')]},
+{d:['Lun','7 dic'],t:'Medellín a Jericó',hq:'Jericó Antioquia',km:'≈135 km',dr:'≈3,5–4 h',pj:'Si vas por el Suroeste: Amagá $20.600 y La Pintada $23.900 (tarifas 2026); depende de la vía que elijas.',sl:'Casa colonial u hotel en el casco urbano de Jericó',sq:'hoteles en Jericó, Antioquia',o:'Medellín, Antioquia',de:'Jericó, Antioquia',s:[
+L('08:00','Salida de Medellín','Sal temprano para llegar con luz al pueblo.','Medellín, Antioquia'),
+A('12:30','Parque principal y catedral','Almuerzo y primer paseo por el centro del pueblo.','Jericó Antioquia catedral','Parque Principal, Jericó, Antioquia'),
+A('15:00','Cerro Cristo Rey','Mirador sobre el pueblo y las montañas del suroeste antioqueño.','Cerro Cristo Rey Jericó','Cerro Cristo Rey, Jericó, Antioquia'),
+A('16:30','Casa Museo Madre Laura','Recorrido por la vida de Santa Laura Montoya, nacida en Jericó. Confirma horario.','Madre Laura Jericó','Museo Madre Laura, Jericó, Antioquia'),
+L('19:00','Noche de velitas','El 7 de diciembre es el Día de las Velitas: la plaza se llena de luces y gente.','Parque Principal, Jericó, Antioquia')]},
+{d:['Mar','8 dic'],t:'Jericó a Jardín (festivo)',hq:'Jardín Antioquia',km:'≈35–40 km',dr:'≈1–1,5 h',sl:'Hotel alrededor de la plaza de Jardín',sq:'hoteles en Jardín, Antioquia',o:'Jericó, Antioquia',de:'Jardín, Antioquia',s:[
+L('09:30','Desayuno y salida','El 8 de diciembre es festivo en Colombia: reserva alojamiento con anticipación y revisa el estado de la vía.','Jericó, Antioquia'),
+A('11:30','Basílica de la Inmaculada Concepción','El edificio que domina la plaza principal de Jardín.','Basílica Inmaculada Concepción Jardín Antioquia','Basílica Menor de la Inmaculada Concepción, Jardín, Antioquia'),
+A('15:00','Teleférico de Jardín','Subida panorámica para ver el pueblo desde arriba.','Teleférico Jardín Antioquia','Teleférico de Jardín, Antioquia'),
+L('18:30','Cena en la plaza','Terrazas y cafés alrededor del parque principal.','Parque Principal, Jardín, Antioquia')]},
+{d:['Mié','9 dic'],t:'Cueva del Esplendor y rumbo a Santa Rosa de Cabal',hq:'Santa Rosa de Cabal Risaralda',km:'≈150–160 km',dr:'≈4–5 h',sl:'Hotel o cabaña cerca de los termales de Santa Rosa de Cabal',sq:'hoteles en Santa Rosa de Cabal, Risaralda',o:'Jardín, Antioquia',de:'Santa Rosa de Cabal, Risaralda',s:[
+A('07:30','Cueva del Esplendor','Cascada que cae por un hueco en el techo de una cueva. Confirma acceso y horarios.','Cueva del Esplendor Jardín','Cueva del Esplendor, Jardín, Antioquia'),
+L('11:00','Traslado a Santa Rosa de Cabal','Es un trayecto largo de montaña: almuerza en ruta y calcula llegar con luz.','Santa Rosa de Cabal, Risaralda'),
+A('17:00','Parque principal de Santa Rosa de Cabal','Primer paseo por el pueblo y cena tranquila.','Santa Rosa de Cabal Risaralda','Parque Principal, Santa Rosa de Cabal, Risaralda')]},
+{d:['Jue','10 dic'],t:'Un día completo en Santa Rosa de Cabal',hq:'Termales Santa Rosa de Cabal',km:'Local',dr:'Trayectos cortos',sl:'El mismo hotel de anoche',sq:'hoteles en Santa Rosa de Cabal, Risaralda',o:null,de:'Santa Rosa de Cabal, Risaralda',s:[
+A('08:30','Termales de Santa Rosa de Cabal','Piscinas termales y cascada en medio del bosque. Llega temprano y confirma horarios y tarifas.','Termales Santa Rosa de Cabal','Termales de Santa Rosa de Cabal, Risaralda'),
+A('13:00','Chorizos y centro del pueblo','El pueblo es conocido por sus chorizos; prueba uno cerca del parque principal.','Santa Rosa de Cabal chorizo','Santa Rosa de Cabal, Risaralda'),
+A('15:30','Termales San Vicente (alternativa)','Otra opción termal en la zona si prefieres una tarde tranquila. Confirma horarios y tarifas.','Termales San Vicente Santa Rosa de Cabal','Termales San Vicente, Santa Rosa de Cabal, Risaralda')]},
+{d:['Vie','11 dic'],t:'Santa Rosa de Cabal a Ibagué',hq:'Ibagué Tolima',km:'≈210 km',dr:'≈5–6 h',pj:'Túnel de La Línea: $12.400. Si pasas por Armenia, Pavas: $16.200. Hay más peajes en el tramo.',sl:'Hotel en el centro o norte de Ibagué',sq:'hoteles en Ibagué, Tolima',o:'Santa Rosa de Cabal, Risaralda',de:'Ibagué, Tolima',s:[
+L('07:30','Salida temprano','Sal con tanque lleno. El paso por La Línea puede tener cierres o filas: revisa el estado de la vía antes de salir.','Santa Rosa de Cabal, Risaralda'),
+A('10:30','Alto de La Línea','Cruce de la cordillera Central; la visibilidad cambia rápido, maneja con calma.','Alto de La Línea Colombia','Alto de La Línea, Colombia'),
+L('13:00','Almuerzo en ruta','Pausa larga antes de entrar a Ibagué; Cajamarca queda en el camino.','Cajamarca, Tolima'),
+A('17:30','Parque Murillo Toro','Plaza principal de Ibagué, con cafés y restaurantes alrededor.','Parque Murillo Toro Ibagué','Parque Murillo Toro, Ibagué, Tolima')]},
+{d:['Sáb','12 dic'],t:'Ibagué, capital musical de Colombia',hq:'Ibagué Colombia',km:'Local',dr:'Trayectos cortos',sl:'Fin del viaje en Ibagué',sq:'hoteles en Ibagué, Tolima',o:null,de:'Ibagué, Tolima',s:[
+A('09:00','Jardín Botánico San Jorge','Parque botánico para caminar entre árboles nativos. Confirma horario.','Jardín Botánico San Jorge Ibagué','Jardín Botánico San Jorge, Ibagué, Tolima'),
+A('11:30','Cañón del Combeima','Paisaje de montaña muy cerca de la ciudad; confirma qué sectores están abiertos.','Cañón del Combeima Ibagué','Cañón del Combeima, Ibagué, Tolima'),
+A('15:00','Conservatorio del Tolima','Institución que da a Ibagué su fama musical; confirma si hay visitas o conciertos.','Conservatorio del Tolima Ibagué','Conservatorio del Tolima, Ibagué, Tolima'),
+L('17:00','Opcional: volver a Fusagasugá','Si decides regresar hoy, revisa ruta y tiempo en Maps antes de salir.',FU)]}
 ];
-
-// Build thumbnail URL from YouTube ID
-function ytThumb(id) {
-  return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
-}
-
-// Build rows
-DAYS.forEach(day => {
-  const el = document.getElementById(day.id);
-  day.exercises.forEach(ex => {
-    const row = document.createElement('div');
-    row.className = 'exercise-row';
-    row.innerHTML = `
-      <div class="ex-num">${ex.num}</div>
-      <div class="ex-thumb" role="button" aria-label="Watch ${ex.name}">
-        <img src="${ytThumb(ex.yt)}" alt="${ex.name}" loading="lazy">
-        <div class="play-overlay">
-          <div class="play-circle">
-            <svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>
-          </div>
-        </div>
-      </div>
-      <div class="ex-info">
-        <div class="ex-name">${ex.name}${ex.isNew?'<span class="new-badge">NEW</span>':''}</div>
-        <div class="ex-why">${ex.why}</div>
-      </div>
-      <div class="ex-tag">${ex.sets}</div>
-    `;
-    row.querySelector('.ex-thumb').addEventListener('click', () => openModal(ex));
-    el.appendChild(row);
-  });
-});
-
-// ── MODAL ──
-const modal     = document.getElementById('modal');
-const modalName = document.getElementById('modal-name');
-const modalVid  = document.getElementById('modal-video');
-const modalSets = document.getElementById('modal-sets');
-const modalWhy  = document.getElementById('modal-why');
-
-function openModal(ex) {
-  modalName.textContent = ex.name;
-  modalSets.textContent = ex.sets;
-  modalWhy.textContent  = ex.why;
-  // Embed YouTube with autoplay, mute=0 so they can hear coaching cues
-  modalVid.innerHTML = `<iframe
-    src="https://www.youtube.com/embed/${ex.yt}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
-    allow="autoplay; encrypted-media; picture-in-picture"
-    allowfullscreen
-    loading="lazy">
-  </iframe>`;
-  modal.classList.add('open');
-}
-
-function closeModal() {
-  modal.classList.remove('open');
-  modalVid.innerHTML = ''; // stop video
-}
-
-document.getElementById('modal-x').addEventListener('click', closeModal);
-modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-
-// ── CAROUSEL ──
-const carousel = document.getElementById('carousel');
-const dotsWrap = document.getElementById('dots');
-const total    = carousel.children.length;
-let cur = 0, sx = 0, dragging = false, dx = 0;
-
-for (let i = 0; i < total; i++) {
-  const d = document.createElement('div');
-  d.className = 'dot' + (i===0?' active':'');
-  d.addEventListener('click', () => goTo(i));
-  dotsWrap.appendChild(d);
-}
-
-function goTo(i) {
-  cur = Math.max(0, Math.min(total-1, i));
-  carousel.style.transform = `translateX(-${cur*100}%)`;
-  dotsWrap.querySelectorAll('.dot').forEach((d,j) => d.classList.toggle('active', j===cur));
-}
-
-document.getElementById('prev').addEventListener('click', () => goTo(cur-1));
-document.getElementById('next').addEventListener('click', () => goTo(cur+1));
-
-carousel.addEventListener('touchstart', e => {
-  if (modal.classList.contains('open')) return;
-  sx = e.touches[0].clientX; dragging = true;
-  carousel.style.transition = 'none';
-}, {passive:true});
-
-carousel.addEventListener('touchmove', e => {
-  if (!dragging || modal.classList.contains('open')) return;
-  dx = e.touches[0].clientX - sx;
-  carousel.style.transform = `translateX(${-(cur*100)+(dx/innerWidth*100)}%)`;
-}, {passive:true});
-
-carousel.addEventListener('touchend', () => {
-  if (!dragging) return;
-  dragging = false;
-  carousel.style.transition = 'transform 0.45s cubic-bezier(0.77,0,0.18,1)';
-  if (dx < -50) goTo(cur+1);
-  else if (dx > 50) goTo(cur-1);
-  else goTo(cur);
-  dx = 0;
-});
-
-document.addEventListener('keydown', e => {
-  if (e.key==='Escape') { closeModal(); return; }
-  if (modal.classList.contains('open')) return;
-  if (e.key==='ArrowRight') goTo(cur+1);
-  if (e.key==='ArrowLeft')  goTo(cur-1);
-});
-</script>
-</body>
-</html>
+const G=[
+['Cañón del Río Claro','Cabañas de la reserva u hoteles en Doradal.','Sancocho y pescado de río.','Reserva las actividades guiadas con antelación y confirma horarios de ingreso.','Cañón del Río Claro, Antioquia'],
+['Guatapé','Hoteles en el pueblo o con vista al embalse.','Trucha, patacones y arepas.','Los fines de semana la Piedra se llena: sube temprano.','Guatapé, Antioquia'],
+['Medellín','El Poblado y Laureles concentran hoteles y restaurantes.','Bandeja paisa, arepas, buñuelos; el Mercado del Río reúne varias cocinas.','Consulta si el pico y placa aplica a tu placa y mueve la ciudad en Metro.','Medellín, Antioquia'],
+['Jericó','Casas coloniales y hoteles pequeños en el casco urbano.','Cocina paisa y café de la región.','Calles empinadas: lleva calzado cómodo.','Jericó, Antioquia'],
+['Jardín','Hoteles y posadas alrededor de la plaza.','Trucha, café y postres en la plaza.','El 8 de diciembre es festivo: reserva con anticipación.','Jardín, Antioquia'],
+['Santa Rosa de Cabal','Hoteles y cabañas cerca de los termales (2 noches).','Chorizos de Santa Rosa en el pueblo.','Llega temprano a los termales y confirma tarifas.','Santa Rosa de Cabal, Risaralda'],
+['Ibagué','Hoteles en el centro y el norte de la ciudad.','Tamal y lechona tolimense.','Es una ciudad cálida y musical; sal de La Línea con margen de tiempo.','Ibagué, Tolima']];
+const DEST=[['Río Claro','Río Claro Antioquia mármol',0,'Días 1–2'],['Guatapé','Guatapé Antioquia pueblo',1,'Días 2–3'],['Medellín','Medellín Colombia',2,'Días 3–5'],['Jericó','Jericó Antioquia',4,'Día 5'],['Jardín','Jardín Antioquia',5,'Días 6–7'],['Santa Rosa de Cabal','Santa Rosa de Cabal',5,'Días 7–8'],['Ibagué','Ibagué Tolima',8,'Días 9–10']];
+const BD=[['pax','Personas',2],['fuel','Combustible (total)',600000],['toll','Peajes (total)',300000],['hot','Alojamiento por noche (por habitación)',220000],['rooms','Habitaciones',1],['food','Comida por persona al día',90000],['act','Actividades por persona (total)',450000],['ext','Imprevistos (%)',10]];
+const CK=[['Carro',['SOAT vigente','Revisión técnico-mecánica al día','Licencia, tarjeta de propiedad y seguro a mano','Revisar frenos, llantas, luces, aceite y llanta de repuesto','Kit de carretera y cargador para el celular']],
+['Reservas',['Alojamiento de las 9 noches, sobre todo Jardín (festivo 8 dic) y Santa Rosa de Cabal','Actividades en el Cañón del Río Claro','Ingreso a la Piedra del Peñol y al teleférico de Jardín, si aplica','Termales de Santa Rosa de Cabal','Alojamiento en Ibagué','Tour de la Comuna 13']],
+['Ruta',['Descargar mapas sin conexión en Google Maps','Revisar el estado de las vías, en especial La Línea y Jericó–Jardín','Efectivo para peajes y pueblos con poca señal','Consultar pico y placa en Medellín']],
+['Maleta',['Impermeable y calzado cómodo para caminatas','Ropa fresca para Río Claro y abrigo ligero para la noche','Traje de baño y toalla para los termales','Protector solar y repelente','Documento de identidad']]];
+const PT=[['Fusagasugá',4.337,-74.364,9,[-8,-6,'end']],['Río Claro',5.90,-74.86,0,[10,4,'start']],['Guatapé',6.233,-75.16,1,[10,-4,'start']],['Medellín',6.244,-75.581,2,[-2,-14,'middle']],['Jericó',5.79,-75.786,4,[12,4,'start']],['Jardín',5.598,-75.819,5,[12,5,'start']],['Santa Rosa',4.868,-75.621,6,[12,4,'start']],['Ibagué',4.438,-75.232,8,[12,4,'start']]];
+const hue=s=>Math.abs([...s].reduce((a,c)=>(a*31+c.charCodeAt(0))|0,7))%360;
+const ph=(q,cls='',i=0)=>{const h=hue(q);return `<div class="ph ${cls}" data-q="${q}" data-i="${i}" style="--h:${h};--h2:${(h+35)%360}"><b>${q}</b><button class="sw" data-sw>↻ Otra foto</button></div>`};
+const mem={},used=new Set(),BAD=/svg|flag|bandera|escudo|logo|mapa|map_|locator|coat/i;
+let fail=0,okc=0;
+const bad=()=>{if(++fail>=3&&!okc&&!$('#warn')){const w=document.createElement('div');w.id='warn';w.className='note';w.style.cssText='margin:12px 20px;position:relative;z-index:5';w.innerHTML='<b>No se pudieron cargar las fotos.</b> Necesitan internet y abrir este archivo directamente en Safari o Chrome (no desde la vista previa de otra app). Descárgalo, ábrelo ahí y recarga.';document.body.insertBefore(w,$('#app'))}};
+async function J(u){const c=new AbortController(),t=setTimeout(()=>c.abort(),10000);try{return await (await fetch(u,{signal:c.signal})).json()}finally{clearTimeout(t)}}
+const pg=j=>Object.values((j.query||{}).pages||{}).sort((a,b)=>a.index-b.index);
+async function cands(q){if(mem[q])return mem[q];try{const s=localStorage.getItem('ph:'+q);if(s){const v=JSON.parse(s);if(v.length)return mem[q]=v}}catch(e){}
+let out=[];
+try{out=pg(await J('https://es.wikipedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrlimit=6&prop=pageimages&piprop=thumbnail&pithumbsize=1100&gsrsearch='+enc(q))).map(p=>p.thumbnail&&p.thumbnail.source).filter(u=>u&&!BAD.test(u)).slice(0,3)}catch(e){}
+try{out=out.concat(pg(await J('https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&generator=search&gsrnamespace=6&gsrlimit=14&prop=imageinfo&iiprop=url|size|mime&iiurlwidth=1100&gsrsearch='+enc(q))).map(x=>({i:(x.imageinfo||[])[0],t:x.title})).filter(o=>o.i&&/jpe?g|png/.test(o.i.mime)&&o.i.width>=700&&!BAD.test(o.t)).map(o=>o.i.thumburl).slice(0,6))}catch(e){}
+out=[...new Set(out)];if(out.length){mem[q]=out;try{localStorage.setItem('ph:'+q,JSON.stringify(out))}catch(e){}}return out}
+async function load(el,n=0){let c=[];try{c=await cands(el.dataset.q)}catch(e){}if(!c.length)return bad();const i=+el.dataset.i;let k=0;while(k<c.length-1&&used.has(c[(i+k)%c.length]))k++;const u=c[(i+k)%c.length],im=new Image();
+im.onload=()=>{okc++;used.add(u);el.style.backgroundImage=`url("${u}")`;el.classList.add('on')};
+im.onerror=()=>{if(n<c.length){el.dataset.i=i+k+1;load(el,n+1)}else bad()};im.src=u}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){io.unobserve(e.target);load(e.target)}}),{rootMargin:'500px'});
+const watch=()=>document.querySelectorAll('.ph:not([data-w])').forEach(e=>{e.dataset.w=1;io.observe(e)});
+const dayDone=i=>D[i].s.every((s,k)=>!s[3]||st.done[i+'-'+k]);
+const prog=()=>{let t=0,d=0;D.forEach((x,i)=>x.s.forEach((s,k)=>{if(s[3]){t++;if(st.done[i+'-'+k])d++}}));CK.forEach((g,gi)=>g[1].forEach((_,k)=>{t++;if(st.chk[gi+'-'+k])d++}));return[d,t]};
+function mapSVG(){const k=210,P=PT.map(p=>({n:p[0],x:(p[2]+75.95)*k+30,y:(6.45-p[1])*k+20,d:p[3],l:p[4]}));
+const path=P.slice(1).map((p,i)=>(i?'L':'M'+P[0].x+' '+P[0].y+' L')+p.x+' '+p.y).join(' ');
+return `<svg viewBox="0 0 400 510" role="img" aria-label="Esquema de la ruta"><path d="${path.replace('ML','M').replace(/^M/,'M')}" fill="none" stroke="#f2b134" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${P.map(p=>`<g data-dest="${p.d==9?0:p.d}"><circle cx="${p.x}" cy="${p.y}" r="${p.d==9?7:11}" fill="${p.d<9&&dayDone(p.d)?'#f2b134':'#0b2a20'}" stroke="#f2b134" stroke-width="2.5"/>${p.d<9?`<text x="${p.x}" y="${p.y+4}" text-anchor="middle" style="fill:${dayDone(p.d)?'#10231c':'#fff'};font-weight:800">${p.d+1}</text>`:''}<text x="${p.x+p.l[0]}" y="${p.y+p.l[1]}" text-anchor="${p.l[2]}">${p.n}</text></g>`).join('')}</svg>`}
+function home(){const[d,t]=prog(),pc=Math.round(d/t*100),C=2*Math.PI*20;
+return `<header class="hero">${ph('Embalse de Guatapé','hb')}<div class="shade"></div><div class="hc"><p>Fusagasugá · Antioquia · Eje Cafetero · Ibagué</p><h1>Colombia<br>2026</h1><p class="lead">Diez días en carro entre cañones, embalses, pueblos de montaña y termales, de Fusagasugá a Ibagué.</p><div class="row"><button class="btn sun" data-go="itin">Ver itinerario</button><a class="btn ghost" target="_blank" rel="noopener" href="${FULL}">Ruta completa en Maps</a></div></div></header>
+<section class="wrap"><div class="stats"><div class="tile"><strong>3–12 dic</strong><span>2026, jueves a sábado</span></div><div class="tile"><strong>10 días</strong><span>9 noches en 7 destinos</span></div><div class="tile"><strong>≈1.050 km</strong><span>de carretera, aproximado</span></div><div class="tile"><svg width="52" height="52" viewBox="0 0 52 52"><circle cx="26" cy="26" r="20" fill="none" stroke="#dde5d9" stroke-width="6"/><circle cx="26" cy="26" r="20" fill="none" stroke="#1c5a45" stroke-width="6" stroke-linecap="round" stroke-dasharray="${C*pc/100} ${C}" transform="rotate(-90 26 26)"/></svg><strong>${pc}%</strong><span>${d} de ${t} pendientes listos</span></div></div></section>
+<section class="wrap" style="padding-top:0"><div class="mapc"><div><h2 style="color:#fff">Tu ruta</h2><p style="color:#cfe0d6;margin-bottom:16px">Toca un punto para abrir ese día. El número marca el día en que llegas; se llena cuando completas sus actividades.</p><a class="btn sun" target="_blank" rel="noopener" href="${FULL}">Abrir ruta en Google Maps</a><p style="color:#9fb9ab;font-size:13px;margin-top:14px">Esquema ilustrativo, no es un mapa de carreteras.</p></div>${mapSVG()}</div>
+<div class="note"><b>Fechas a tener en cuenta:</b> la noche del 7 de diciembre es el Día de las Velitas y el 8 es festivo en Colombia. Espera más tráfico y menos disponibilidad de alojamiento, sobre todo en Jericó y Jardín.</div></section>
+<section class="wrap" style="padding-top:0"><h2>Destinos</h2><p class="sub">Siete paradas, de los cañones de Antioquia al Tolima.</p><div class="scroll">${DEST.map(x=>`<button class="dc" data-dest="${x[2]}">${ph(x[1])}<div class="t"><h3>${x[0]}</h3><small>${x[3]}</small></div></button>`).join('')}</div></section>`}
+const stop=(s,k)=>{const[h,n,t,q,m]=s,key=st.day+'-'+k,dn=st.done[key];return `<article class="stop${dn?' done':''}${q?'':' np'}">${q?ph(q,'sp'):''}<div class="sb"><time>${h}</time><h3>${n}</h3><p>${t}</p><div class="ac"><a class="btn sm" target="_blank" rel="noopener" href="${MQ((m||q||n)+(/,/.test(m||'')?'':', Colombia'))}">Abrir en Maps</a>${q?`<button class="btn sm chk" data-done="${key}" aria-pressed="${!!dn}">${dn?'Completada ✓':'Marcar completada'}</button>`:''}</div></div></article>`};
+function itin(){const x=D[st.day],i=st.day;
+return `<div class="chips">${D.map((y,j)=>`<button data-day="${j}" aria-selected="${j==i}" class="${dayDone(j)?'ok':''}">${y.d[1].split(' ')[0]}<small>${y.d[0]}</small></button>`).join('')}</div>
+<section class="wrap"><div class="dh">${ph(x.hq,'hb',1)}<div class="dt"><p>Día ${i+1} de 10 · ${x.d[0]} ${x.d[1]}</p><h2>${x.t}</h2></div></div>
+<div class="meta"><div class="tile"><span>Conducción</span><strong>${x.dr}</strong></div><div class="tile"><span>Distancia</span><strong>${x.km}</strong></div><div class="tile"><span>Dormir</span><strong style="font-size:17px">${x.sl}</strong><a target="_blank" rel="noopener" href="${MQ(x.sq)}">Ver opciones en Maps</a></div>${x.pj?`<div class="tile"><span>Peajes (categoría I)</span><strong style="font-size:15px;font-weight:600;line-height:1.4">${x.pj}</strong></div>`:''}</div>
+<div class="row" style="margin:0">${x.o?`<a class="btn sun" target="_blank" rel="noopener" href="${DIR(x.o,x.de)}">Ruta del día en Maps</a>`:''}<a class="btn" target="_blank" rel="noopener" href="${MQ(x.de)}">Ver destino</a></div>
+<div class="stops">${x.s.map(stop).join('')}</div>
+<div class="pn">${i?`<button class="btn" data-day="${i-1}">Día ${i}</button>`:'<span></span>'}${i<9?`<button class="btn sun" data-day="${i+1}">Día ${i+2}</button>`:''}</div></section>`}
+function guide(){return `<section class="wrap"><h2>Dónde dormir y comer</h2><p class="sub">Zonas recomendadas y qué probar en cada parada. Los botones abren búsquedas en Google Maps con precios, fotos y reseñas actuales.</p>${G.map(g=>`<details><summary>${g[0]}</summary><div><p><b>Dormir:</b> ${g[1]} <a target="_blank" rel="noopener" href="${MQ('hoteles en '+g[4])}">Ver hoteles</a></p><p><b>Comer:</b> ${g[2]} <a target="_blank" rel="noopener" href="${MQ('restaurantes en '+g[4])}">Ver restaurantes</a></p><p><b>Consejo:</b> ${g[3]}</p></div></details>`).join('')}</section>`}
+const fmt=n=>'$ '+Math.round(n).toLocaleString('es-CO');
+const bv=k=>{const v=st.bud[k];return v==null?BD.find(b=>b[0]==k)[2]:+v};
+function calc(){const b={};BD.forEach(x=>b[x[0]]=bv(x[0]));const r=[['Combustible',b.fuel],['Peajes',b.toll],['Alojamiento (9 noches)',b.hot*9*b.rooms],['Comida (10 días)',b.food*b.pax*10],['Actividades',b.act*b.pax]],s=r.reduce((a,c)=>a+c[1],0),e=s*b.ext/100,t=s+e;
+$('#bd').innerHTML=r.map(x=>`<div class="f"><span>${x[0]}</span><b>${fmt(x[1])}</b></div>`).join('')+`<div class="f"><span>Imprevistos</span><b>${fmt(e)}</b></div>`;
+$('#bt').innerHTML=`<p>Total estimado (COP)</p><strong>${fmt(t)}</strong><p>${fmt(t/b.pax)} por persona</p>`}
+function bud(){return `<section class="wrap"><h2>Presupuesto</h2><p class="sub">Valores de referencia en pesos colombianos. Cámbialos por los precios reales que encuentres y el total se actualiza solo.</p>${BD.map(x=>`<label class="f"><span>${x[1]}</span><input type="number" inputmode="numeric" min="0" data-b="${x[0]}" value="${bv(x[0])}"></label>`).join('')}<div class="note" style="margin:16px 0"><b>Combustible:</b> la gasolina corriente cuesta cerca de $16.300 por galón (Bogotá $16.331 y Medellín $16.251 en noviembre de 2026; diciembre puede cambiar). Con unos 1.200 km y 30–35 km por galón gastarías unos 34–40 galones, es decir $560.000–$650.000.<br><br><b>Peajes, categoría I (carro particular):</b> Túnel de La Línea $12.400, El Santuario $18.000, Pavas $16.200, Amagá $20.600 y La Pintada $23.900. Puerto Triunfo está sin cobro por una protesta. No pude confirmar la lista completa de peajes de tu ruta exacta: $300.000 es una estimación (rango $250.000–$350.000).</div><div id="bd" style="margin-top:14px"></div><div class="tot" id="bt"></div></section>`}
+function list(){return `<section class="wrap"><h2>Lista de preparación</h2><p class="sub">Marca lo que ya tienes resuelto; se guarda en este dispositivo.</p>${CK.map((g,gi)=>`<h3 class="g">${g[0]}</h3>${g[1].map((t,k)=>`<label class="ck"><input type="checkbox" data-chk="${gi}-${k}" ${st.chk[gi+'-'+k]?'checked':''}><span>${t}</span></label>`).join('')}`).join('')}</section>`}
+const V={home,itin,guide,bud,list};
+function go(t){st.tab=t;save();document.querySelectorAll('#nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.t==t));$('#app').innerHTML=V[t]();watch();if(t=='bud')calc();scrollTo(0,0)}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-t],[data-go],[data-day],[data-dest],[data-done],[data-sw]');if(!t)return;const d=t.dataset;
+if(d.t)go(d.t);else if(d.go)go(d.go);
+else if(d.dest!=null){st.day=+d.dest;go('itin')}
+else if(d.day!=null){st.day=+d.day;go('itin')}
+else if(d.done){st.done[d.done]=!st.done[d.done];save();const on=st.done[d.done];t.setAttribute('aria-pressed',on);t.textContent=on?'Completada ✓':'Marcar completada';t.closest('.stop').classList.toggle('done',on);document.querySelector('.chips [aria-selected=true]').classList.toggle('ok',dayDone(st.day))}
+else if(d.sw!=null){const el=t.parentNode;el.dataset.i=+el.dataset.i+1;load(el)}});
+document.addEventListener('change',e=>{const c=e.target.dataset.chk;if(c){st.chk[c]=e.target.checked;save()}});
+document.addEventListener('input',e=>{const b=e.target.dataset.b;if(b){st.bud[b]=Math.max(0,+e.target.value||0);save();calc()}});
+go(st.tab&&V[st.tab]?st.tab:'home');
+</script></body></html>
